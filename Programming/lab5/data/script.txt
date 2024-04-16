@@ -1,0 +1,13 @@
+add
+lab2
+455
+6
+7
+12
+12
+2
+bd
+20
+show
+clear
+show
