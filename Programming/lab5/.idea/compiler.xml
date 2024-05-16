@@ -9,8 +9,5 @@
         <module name="lab5" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="lab5" target="18" />
-    </bytecodeTargetLevel>
   </component>
 </project>
