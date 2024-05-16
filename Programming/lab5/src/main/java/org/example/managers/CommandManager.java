@@ -5,7 +5,7 @@ import org.example.commands.*;
 import java.util.*;
 
 /**
- * Класс для управления командами
+ * Класс для управления командами (Invoker)
  */
 public class CommandManager {
     /**
@@ -29,6 +29,7 @@ public class CommandManager {
 
     /**
      * Выполнение команды
+     *
      * @param line аргументы команды
      */
     public void commandExecute(String[] line) {
@@ -40,12 +41,8 @@ public class CommandManager {
         }
     }
 
-    public boolean containsCommand(String command){
-        if(commandsMap.containsKey(command)){
-            return true;
-        }else{
-            return false;
-        }
+    public boolean containsCommand(String command) {
+        return commandsMap.containsKey(command);
     }
 
     public boolean isUserMode() {
@@ -62,7 +59,8 @@ public class CommandManager {
 
     /**
      * Добавляет в commandsMap новый элемент
-     * @param name Название команды
+     *
+     * @param name    Название команды
      * @param command Команда
      */
     public void addCommand(String name, Command command) {
@@ -75,6 +73,7 @@ public class CommandManager {
 
     /**
      * Добавляет команду в историю
+     *
      * @param c Команда
      */
     public void addToHistory(Command c) {

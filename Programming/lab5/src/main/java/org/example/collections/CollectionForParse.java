@@ -3,6 +3,9 @@ package org.example.collections;
 import javax.xml.bind.annotation.*;
 import java.util.LinkedList;
 
+/**
+ * Класс, (коллекция) для записи в xml файл
+ */
 @XmlRootElement(name = "Collection")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CollectionForParse {

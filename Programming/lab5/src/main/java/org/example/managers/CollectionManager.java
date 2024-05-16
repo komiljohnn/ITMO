@@ -4,13 +4,14 @@ import org.example.collections.LabWork;
 import org.example.collections.comparators.LabWorkComparator;
 import org.example.collections.CollectionForParse;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TreeSet;
 
 /**
- * Класс для работы с коллекцией
+ * Класс для работы с коллекцией(Receiver)
  */
 public class CollectionManager {
     private LinkedList<LabWork> collection;
@@ -30,6 +31,7 @@ public class CollectionManager {
 
     /**
      * Сортирует коллекцию по возрастанию
+     *
      * @return Отсортированную коллекцию
      */
     public TreeSet<LabWork> sortAscending() {
@@ -49,6 +51,7 @@ public class CollectionManager {
 
     /**
      * Возвращает элемент по id
+     *
      * @param id id
      * @return Возвращает элемент
      */
@@ -67,6 +70,7 @@ public class CollectionManager {
 
     /**
      * Удаляет элемент по id
+     *
      * @param id id
      * @return Возвращает результат удаления элемента
      */
@@ -83,6 +87,7 @@ public class CollectionManager {
 
     /**
      * Удаляет все элементы коллекции которые меньше labWork
+     *
      * @param labWork элемент(labWork)
      */
     public void removeLower(LabWork labWork) {
@@ -96,10 +101,11 @@ public class CollectionManager {
 
     /**
      * Заполняет коллекцию с данными из файла
-     * @param path Путь до файла
+     *
+     * @param path        Путь до файла
      * @param fileManager Менеджер файлов
      */
-    public void loadCollection(String path, FileManager fileManager) {
+    public void loadCollection(File path, FileManager fileManager) {
         CollectionForParse collectionForParse1 = fileManager.parseXmlToCollection(path);
         for (LabWork labWork : collectionForParse1.getList()) {
             IdManager.addById(labWork.getId());

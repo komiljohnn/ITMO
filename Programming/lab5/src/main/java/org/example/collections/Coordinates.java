@@ -3,6 +3,9 @@ package org.example.collections;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+/**
+ * Класс координат
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Coordinates {
     private double x; //Максимальное значение поля: 452
@@ -25,11 +28,11 @@ public class Coordinates {
         this.x = x;
     }
 
-    public float getY() {
+    public Float getY() {
         return y;
     }
 
-    public void setY(float y) {
+    public void setY(Float y) {
         this.y = y;
     }
 

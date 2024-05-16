@@ -3,6 +3,9 @@ package org.example.commands;
 import org.example.managers.CollectionManager;
 import org.example.utility.Console;
 
+/**
+ * Команда, которая очищает коллекцию
+ */
 public class Clear implements Command {
     private final CollectionManager collectionManager;
     private final Console console;

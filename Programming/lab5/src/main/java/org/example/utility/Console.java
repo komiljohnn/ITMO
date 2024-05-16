@@ -6,12 +6,13 @@ package org.example.utility;
 public class Console {
     private final String cursor = "# ";
 
-    public void printCursor(){
+    public void printCursor() {
         print(cursor);
     }
 
     /**
      * Выводит object в консоль
+     *
      * @param object Объект для вывода
      */
     public void print(Object object) {
@@ -20,6 +21,7 @@ public class Console {
 
     /**
      * Выводит object + "\n" в консоль
+     *
      * @param object Объект для вывода
      */
     public void println(Object object) {
@@ -28,6 +30,7 @@ public class Console {
 
     /**
      * Выводит "Ошибка: " + object в консоль
+     *
      * @param object Объект для вывода
      */
     public void printError(Object object) {

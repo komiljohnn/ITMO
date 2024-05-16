@@ -6,6 +6,9 @@ import java.time.LocalDate;
 
 import org.example.utility.parser.LocalDateAdapter;
 
+/**
+ * Класс лабораторная работа
+ */
 @XmlRootElement(name = "labWork")
 @XmlType(name = "labWork", propOrder = {"id", "name", "coordinates", "creationDate", "minimalPoint", "maximumPoint", "personalQualitiesMinimum", "difficulty"
         , "discipline"})
@@ -24,6 +27,10 @@ public class LabWork {
 
     public LabWork() {
 
+    }
+
+    public LabWork(String name){
+        this.name = name;
     }
 
     public LabWork(long id, String name, Coordinates coordinates, LocalDate creationDate, double minimalPoint, Double maximumPoint,
@@ -71,7 +78,7 @@ public class LabWork {
         this.creationDate = creationDate;
     }
 
-    public double getMinimalPoint() {
+    public Double getMinimalPoint() {
         return minimalPoint;
     }
 

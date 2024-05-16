@@ -6,6 +6,9 @@ import org.example.utility.Console;
 
 import java.util.TreeSet;
 
+/**
+ * Команда, которая выводит элементы коллекции в отсортированном виде
+ */
 public class PrintAscending implements Command {
     private final CollectionManager collectionManager;
     private final Console console;
@@ -21,6 +24,9 @@ public class PrintAscending implements Command {
         TreeSet<LabWork> result = collectionManager.sortAscending();
         result.forEach(labWork -> builder.append(labWork).append("\n"));
         console.print(builder.toString());
+        if (builder.isEmpty()) {
+            console.println("Коллекция пуста");
+        }
     }
 
     @Override

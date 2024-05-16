@@ -3,6 +3,9 @@ package org.example.commands;
 import org.example.managers.CollectionManager;
 import org.example.utility.Console;
 
+/**
+ * Команда, которая печатает все элементы в консоль
+ */
 public class Show implements Command {
     private final CollectionManager collectionManager;
     private final Console console;
@@ -17,6 +20,9 @@ public class Show implements Command {
         StringBuilder builder = new StringBuilder();
         collectionManager.getCollection().forEach(l -> builder.append(l).append("\n"));
         console.print(builder.toString());
+        if (builder.isEmpty()) {
+            console.println("Коллекция пуста");
+        }
     }
 
     @Override

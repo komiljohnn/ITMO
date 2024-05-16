@@ -8,6 +8,9 @@ import org.example.managers.CollectionManager;
 import org.example.managers.CommandManager;
 import org.example.utility.Console;
 
+/**
+ * Команда, которая удаляет все элементы коллекции меньше заданной
+ */
 public class RemoveLower implements Command {
     private final CollectionManager collectionManager;
     private final CommandManager commandManager;
@@ -30,8 +33,13 @@ public class RemoveLower implements Command {
             labWorkForm = nonUserMode;
         }
         LabWork labWork = labWorkForm.build();
-        collectionManager.removeLower(labWork);
-        console.println("Удалены все элементы меньше чем заданный!");
+        if (labWork != null) {
+            collectionManager.removeLower(labWork);
+            console.println("Удалены все элементы меньше чем заданный!");
+        } else {
+            console.println("Объект не удален");
+        }
+
     }
 
     @Override

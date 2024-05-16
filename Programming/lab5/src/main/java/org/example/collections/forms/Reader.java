@@ -6,120 +6,142 @@ import org.example.utility.Console;
 
 import java.util.Scanner;
 
+/**
+ * Класс, который читает данные из консоли и проверяет
+ */
 public class Reader {
-    private static Console console;
-    private static boolean mode;
+    private final Console console;
+    private final Scanner scanner;
 
-    public static Integer inputIntValue(Validate<Integer> validate, Scanner scanner) {
-        int res;
-        while (true) {
-            String line = scanner.nextLine();
-            res = Integer.parseInt(line);
-            if (validate.validate(res)) {
-                break;
-            } else {
-                console.print("Ошибка!");
-                console.print("Попробуйте еще раз!");
-            }
-        }
-        return res;
+    public Reader(Console console, Scanner scanner) {
+        this.console = console;
+        this.scanner = scanner;
     }
 
-    public static Double inputDoubleValue(Validate<Double> validate, Scanner scanner) {
-        Double res;
-        while (true) {
-            String line = scanner.nextLine();
-            res = Double.parseDouble(line);
-            if (validate.validate(res)) {
-                break;
-            } else {
-                console.print("Ошибка!");
-                console.println("Попробуйте еще раз!");
-                scanner=new Scanner(System.in);
-            }
-
-        }
-        return res;
-    }
-
-    public static Float inputFloatValue(Validate<Float> validate, Scanner scanner) {
-        float res;
-        while (true) {
-            String line = scanner.nextLine();
-            res = Float.parseFloat(line);
-            if (validate.validate(res)) {
-                break;
-            } else {
-                console.print("Ошибка!");
-                console.print("Попробуйте еще раз!");
-            }
-        }
-        return res;
-    }
-
-    public static String inputStringValue(Validate<String> validate, Scanner scanner) {
-        String line;
-        while (true) {
-            line = scanner.nextLine();
-            if (validate.validate(line.trim())) {
-                break;
-            } else {
-                console.print("Ошибка!");
-                console.print("Попробуйте еще раз!");
-            }
-        }
-
-        return line.trim();
-    }
-
-    public static Long inputLongValue(Scanner scanner, long maxHours) {
-        long res = 0;
-        long lectureHours = Long.parseLong(scanner.nextLine());
-        if (lectureHours != 0 && lectureHours < maxHours) {
-            res = lectureHours;
-        } else {
+    public Integer inputIntValue(Validate<Integer> validate, Scanner scanner) {
+        Integer res;
+        String line = scanner.nextLine();
+        res = Integer.parseInt(line);
+        if (line.isBlank()) {
+            res = null;
+        } else if (!validate.validate(res)) {
             console.print("Ошибка!");
-            console.print("Попробуйте еще раз!");
+            console.println("Попробуйте еще раз!");
         }
         return res;
     }
 
-    public static Difficulty inputDifficulty(Difficulty[] difficulties, Scanner scanner) {
+    public Double inputDoubleValue(Validate<Double> validate, Scanner scanner) {
+        Double res = null;
+        String line;
+        if (scanner.hasNextLine()) {
+            line = scanner.nextLine();
+            line = line.replaceAll(",", ".");
+            res = Double.parseDouble(line);
+            if (!validate.validate(res) || line.isBlank()) {
+                console.printError("Не прошла валидацию");
+                res = null;
+            }
+        }
+
+        return res;
+    }
+
+    public Float inputFloatValue(Validate<Float> validate, Scanner scanner) {
+        Float res = null;
+        String line;
+        if (scanner.hasNextLine()) {
+            line = scanner.nextLine();
+            line = line.replaceAll(",", ".");
+            res = Float.parseFloat(line);
+            if (!validate.validate(res)) {
+                console.printError("Не прошла валидацию\n");
+                res = null;
+            }
+        }
+        return res;
+    }
+
+    public String inputStringValue(Validate<String> validate, Scanner scanner) {
+        String line;
+        if (scanner.hasNextLine()) {
+            line = scanner.nextLine();
+        } else {
+            line = null;
+        }
+        if (!validate.validate(line)) {
+            line = null;
+        }
+        return line;
+    }
+
+    public Long inputLongValue(Scanner scanner, long maxHours) {
+        Long res = null;
+        String line = scanner.nextLine();
+        if (line.isBlank()) {
+            console.printError("Нельзя вводить пустое значение");
+        } else {
+            long lectureHours = Long.parseLong(line);
+            if (lectureHours >= 0 && lectureHours < maxHours) {
+                res = lectureHours;
+            } else {
+                console.printError("Не прошла валидацию\n");
+                res = null;
+            }
+        }
+        return res;
+    }
+
+    public Difficulty inputDifficulty(Difficulty[] difficulties, Scanner scanner) {
         Difficulty difficulty;
         difficulty = null;
-        String scan = scanner.nextLine();
-        String line  = scan.trim();
-        boolean isInteger = line.matches("\\d+");
+        boolean stop = true;
+        boolean incorrectOption = false;
 
-        if(isInteger){
-            int num = Integer.parseInt(line);
-            for(Difficulty value : difficulties) {
-                if (num == value.ordinal()) {
-                    difficulty = value;
-                    break;
+        while (stop) {
+            String scan = "";
+            if (scanner.hasNextLine()) {
+                scan = scanner.nextLine();
+            }
+            String line = scan;
+            boolean isInteger = line.matches("-?\\d+");
+
+            if (isInteger) {
+                int num = Integer.parseInt(line);
+                for (Difficulty value : difficulties) {
+                    if (num == value.ordinal()) {
+                        difficulty = value;
+                        incorrectOption = false;
+                        stop = false;
+                        break;
+                    } else {
+                        incorrectOption = true;
+                    }
+                }
+
+            } else if (line.isBlank()) {
+                difficulty = null;
+                incorrectOption = false;
+                stop = false;
+            } else if (!line.isBlank()) {
+                String up = line.toUpperCase();
+                for (Difficulty val : difficulties) {
+                    if (up.equals(val.toString())) {
+                        difficulty = val;
+                        incorrectOption = false;
+                        stop = false;
+                        break;
+                    } else {
+                        incorrectOption = true;
+                    }
                 }
             }
-        }else {
-            String up = line.toUpperCase();
-            for(Difficulty val : difficulties){
-                if(up.equals(val.toString())){
-                    difficulty = val;
-                    break;
-                }
+            if (incorrectOption) {
+                console.printError("Вы выбрали несуществующую опцию");
             }
+
         }
         return difficulty;
     }
 
-    public static void setConsole(Console console) {
-        Reader.console = console;
-    }
-
-    public static boolean isMode() {
-        return mode;
-    }
-
-    public static void setMode(boolean mode){
-        Reader.mode = mode;
-    }
 }

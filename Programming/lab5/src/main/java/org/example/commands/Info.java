@@ -5,6 +5,9 @@ import org.example.utility.Console;
 
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Команда, которая выводит информацию о коллекции
+ */
 public class Info implements Command {
     private final CollectionManager collectionManager;
     private final Console console;

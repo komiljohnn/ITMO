@@ -18,6 +18,7 @@ public class Parser {
 
     /**
      * Преобразование объекта в формат XML
+     *
      * @param collectionForParse Коллекция которую нужно парсить
      * @return Возвращает данные в формате XML
      */
@@ -38,10 +39,11 @@ public class Parser {
 
     /**
      * Преобразование XML данных в объект
+     *
      * @param path Путь до XML файла, которую нужно распарсить
      * @return Возвращает объект типа CollectionForParse
      */
-    public static CollectionForParse unmarshal(String path) {
+    public static CollectionForParse unmarshal(File path) {
         CollectionForParse result = new CollectionForParse();
         try {
             JAXBContext context = JAXBContext.newInstance(CollectionForParse.class, LabWork.class);
@@ -49,7 +51,7 @@ public class Parser {
             Unmarshaller jaxbUnmarshaller = context.createUnmarshaller();
             result = (CollectionForParse) jaxbUnmarshaller.unmarshal(bufferedReader);
         } catch (JAXBException e) {
-            console.printError("Убедитесь что вы используете JAXB из Maven");
+            console.printError("В файле нарушен формат XML");
         } catch (FileNotFoundException f) {
             console.printError("Вы ввели не существующий файл");
         }
@@ -58,6 +60,7 @@ public class Parser {
 
     /**
      * Присваивает значение к полю console
+     *
      * @param console консоль
      */
     public static void setConsole(Console console) {

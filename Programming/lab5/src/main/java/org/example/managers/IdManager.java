@@ -13,6 +13,7 @@ public class IdManager {
 
     /**
      * Генерирует id
+     *
      * @return возвращает id
      */
     public static long generateId() {
@@ -28,7 +29,8 @@ public class IdManager {
     }
 
     /**
-     *  Удаляет id из хранилища
+     * Удаляет id из хранилища
+     *
      * @param id id
      */
     public static void removeIDbyId(long id) {
@@ -37,10 +39,15 @@ public class IdManager {
 
     /**
      * Добавляет id в хранилище
+     *
      * @param id id
      */
     public static void addById(long id) {
         idList.add(id);
+    }
+
+    public static boolean containsId(long id) {
+        return idList.contains(id);
     }
 
 }

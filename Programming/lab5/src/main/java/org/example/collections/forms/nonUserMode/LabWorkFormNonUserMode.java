@@ -1,6 +1,8 @@
 package org.example.collections.forms.nonUserMode;
 
 import org.example.collections.Coordinates;
+import org.example.collections.Difficulty;
+import org.example.collections.Discipline;
 import org.example.collections.LabWork;
 import org.example.collections.forms.*;
 import org.example.collections.validators.*;
@@ -10,6 +12,9 @@ import org.example.utility.Console;
 import java.time.LocalDate;
 import java.util.Scanner;
 
+/**
+ * Класс, который создает объекты LabWork, в режиме скрипта
+ */
 public class LabWorkFormNonUserMode implements StandardForm<LabWork>, nonUserMode {
     private String[] args;
     private Scanner scanner;
@@ -21,25 +26,75 @@ public class LabWorkFormNonUserMode implements StandardForm<LabWork>, nonUserMod
 
     public LabWork build() {
         LabWork labWork = new LabWork();
-
+        Reader reader = new Reader(console, scanner);
+        boolean create = true;
         getCreationDate(labWork);
 
         getCreationId(labWork);
 
-        getName(labWork);
 
-        getCoordinates(labWork);
+        String name = getName(reader);
+        if (name != null) {
+            labWork.setName(name);
+        } else {
+            create = false;
+        }
 
-        getMinimalPoint(labWork);
+        Coordinates coordinates = getCoordinates();
+        if (coordinates != null) {
+            labWork.setCoordinates(coordinates);
+        } else {
+            create = false;
+        }
 
-        getMaximumPoint(labWork);
+        getMinimalPoint(labWork, reader);
 
-        getPersonalQualitiesMinimum(labWork);
+        Double max = getMaximumPoint(labWork, reader);
+        if (max != null) {
+            labWork.setMaximumPoint(max);
+        } else if (args[4].isBlank()) {
+            create = false;
+        } else {
+            create = false;
+        }
 
-        getDifficulty(labWork);
+        Integer value = getPersonalQualitiesMinimum(reader);
+        if (value == null) {
+            console.printError("Поле не может быть пустым или равен null\n");
+            create = false;
+        } else {
+            if (labWork.getMinimalPoint() != null && labWork.getMaximumPoint() != null) {
+                console.println("Значение: " + value);
+                if (value <= labWork.getMaximumPoint() && value >= labWork.getMinimalPoint()) {
+                    labWork.setPersonalQualitiesMinimum(value);
+                    console.println("");
+                } else {
+                    console.printError("Значение должно быть > " + labWork.getMinimalPoint() + " и < " + labWork.getMaximumPoint() + "\n");
+                    create = false;
+                }
+            } else {
+                console.printError("Не прошла валидацию\n");
+            }
+        }
 
-        getDiscipline(labWork);
+        DifficultyFormNonUserMode difficultyFormNonUserMode = new DifficultyFormNonUserMode(console, scanner);
+        String[] diffArgs = {args[6]};
+        difficultyFormNonUserMode.setArgs(diffArgs);
+        Difficulty tmp = difficultyFormNonUserMode.build();
+        if (tmp == null && (!difficultyFormNonUserMode.isCreate())) {
+            create = false;
+        } else {
+            labWork.setDifficulty(tmp);
+        }
 
+        Discipline discipline = getDiscipline();
+        if (discipline == null) {
+            create = false;
+        }
+
+        if (!create) {
+            labWork = null;
+        }
         return labWork;
     }
 
@@ -62,92 +117,83 @@ public class LabWorkFormNonUserMode implements StandardForm<LabWork>, nonUserMod
         }
     }
 
-    public void getName(LabWork labWork) {
+    public String getName(Reader reader) {
         Validate<String> nameValidate = new NameValidate();
         scanner = new Scanner(args[0]);
-        while (true) {
-            String name = Reader.inputStringValue(nameValidate, scanner);
-            if (!name.isBlank()) {
-                labWork.setName(name);
-                break;
-            } else {
-                console.print("Введите название лабораторной(\"String\" != \"\"): " + "\"String\" != \"null\"): ");
-                scanner = new Scanner(System.in);
-            }
+        console.println("Проверка названии...");
+        String name = reader.inputStringValue(nameValidate, scanner);
+        console.println("Название: " + name);
+        if (name == null || name.isBlank()) {
+            console.printError("Название не может быть пустой или равно null\n");
+            name = null;
+        } else {
+            console.println("");
         }
+        return name;
     }
 
-    public void getMinimalPoint(LabWork labWork) {
+    public void getMinimalPoint(LabWork labWork, Reader reader) {
+        console.println("Проверка минимального значения...");
         Validate<Double> minimalPointValidate = new MinimalPointValidate();
         scanner = new Scanner(args[3]);
-        while (true) {
-            double res = Reader.inputDoubleValue(minimalPointValidate, scanner);
-            if (res != 0) {
-                labWork.setMinimalPoint(res);
-                break;
-            } else {
-                console.print("Введите минимальный балл(\"double\" > 0): ");
-                scanner = new Scanner(System.in);
-            }
+
+        Double res = reader.inputDoubleValue(minimalPointValidate, scanner);
+        console.println("Минимальное значение: " + res + "\n");
+        if (res != null) {
+            labWork.setMinimalPoint(res);
         }
+
     }
 
-    public void getMaximumPoint(LabWork labWork) {
+    public Double getMaximumPoint(LabWork labWork, Reader reader) {
+        console.println("Проверка максимального значения...");
         Validate<Double> getMaximumPoint = new MaximumPointValidate();
         scanner = new Scanner(args[4]);
-        while (true) {
-            double res = Reader.inputDoubleValue(getMaximumPoint, scanner);
-            if (res > labWork.getMinimalPoint()) {
-                labWork.setMaximumPoint(res);
-                break;
+        Double res = reader.inputDoubleValue(getMaximumPoint, scanner);
+        if (labWork.getMinimalPoint() != null) {
+            console.println("Максимальное значение: " + args[4]);
+            if (res != null && res < labWork.getMinimalPoint()) {
+                console.printError("Значение максимального балла должно быть больше чем значение минимального балла!\n");
+                res = null;
+            } else if (args[4].isBlank()) {
+                console.printError("Максимальное значение не может быть пустой или равно null\n");
             } else {
-                console.println("Значение максимального балла должно быть больше чем значение минимального балла!");
-                console.print("Введите максимальный балл(\"Double\" > 0 и \"Double\" != \"null\"): ");
-                scanner = new Scanner(System.in);
+                console.println("");
             }
         }
+        return res;
     }
 
-    public void getPersonalQualitiesMinimum(LabWork labWork) {
+    public Integer getPersonalQualitiesMinimum(Reader reader) {
+        console.println("Проверка значения...");
         Validate<Integer> integerValidate = new PersonalQualitiesMinimum();
-        scanner = new Scanner(args[5]);
-        while (true) {
-            Integer value = Reader.inputIntValue(integerValidate, scanner);
-            if (value <= labWork.getMaximumPoint() && value >= labWork.getMinimalPoint()) {
-                labWork.setPersonalQualitiesMinimum(value);
-                break;
-            } else {
-                console.println("Значение должно быть > " + labWork.getMinimalPoint() + " и < " + labWork.getMaximumPoint());
-                console.print("Введите балл(\"Integer\" > 0): ");
-                scanner = new Scanner(System.in);
-            }
+        Integer res;
+        if (args[5].isBlank()) {
+            res = null;
+        } else {
+            scanner = new Scanner(args[5]);
+            res = reader.inputIntValue(integerValidate, scanner);
         }
+        return res;
     }
 
-    public void getCoordinates(LabWork labWork) {
-        CoordinatesFormNonUserMode coordinatesForm = new CoordinatesFormNonUserMode(console);
+    public Coordinates getCoordinates() {
+        CoordinatesFormNonUserMode coordinatesForm = new CoordinatesFormNonUserMode(console, scanner);
         String[] arguments = {args[1], args[2]};
         coordinatesForm.setArgs(arguments);
         CoordinateCantBeNull coordinateCantBeNull = new CoordinateCantBeNull();
         Coordinates res = coordinatesForm.build();
-        if (coordinateCantBeNull.validate(res)) {
-            labWork.setCoordinates(res);
+        if (!coordinateCantBeNull.validate(res)) {
+            res = null;
         }
-        labWork.setCoordinates(coordinatesForm.build());
+        return res;
     }
 
-    public void getDifficulty(LabWork labWork) {
-        DifficultyFormNonUserMode difficultyFormNonUserMode = new DifficultyFormNonUserMode(console);
-        String[] diffArgs = {args[6]};
-        difficultyFormNonUserMode.setArgs(diffArgs);
-        labWork.setDifficulty(difficultyFormNonUserMode.build());
-    }
-
-    public void getDiscipline(LabWork labWork) {
-        DisciplineFormNonUserMode disciplineFormNonUserMode = new DisciplineFormNonUserMode(console);
+    public Discipline getDiscipline() {
+        DisciplineFormNonUserMode disciplineFormNonUserMode = new DisciplineFormNonUserMode(console, scanner);
         String[] discArgs = {args[7], args[8]};
         disciplineFormNonUserMode.setArgs(discArgs);
-        labWork.setDiscipline(disciplineFormNonUserMode.build());
+        return disciplineFormNonUserMode.build();
     }
 
     @Override

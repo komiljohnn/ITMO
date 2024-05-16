@@ -5,6 +5,9 @@ import org.example.utility.Console;
 
 import java.util.*;
 
+/**
+ * Выводит последние 7 команд, которые вводил пользователь
+ */
 public class History implements Command {
     private final CommandManager commandManager;
     private final Console console;
@@ -23,7 +26,7 @@ public class History implements Command {
             LinkedList<Command> list = new LinkedList<>(commandManager.getHistory());
             Iterator<Command> iterator = list.iterator();
             int count = 7;
-            while(iterator.hasNext() && count != 0){
+            while (iterator.hasNext() && count != 0) {
                 count--;
                 builder.append(list.pollLast().getName()).append("\n");
             }

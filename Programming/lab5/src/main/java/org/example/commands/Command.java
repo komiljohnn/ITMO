@@ -6,5 +6,4 @@ public interface Command {
     String getName();
 
     String getDescription();
-    //TODO : создать еще один интерфейс для команд с аргументами
 }

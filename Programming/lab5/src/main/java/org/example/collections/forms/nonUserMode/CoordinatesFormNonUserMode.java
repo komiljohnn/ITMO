@@ -1,7 +1,6 @@
 package org.example.collections.forms.nonUserMode;
 
 import org.example.collections.Coordinates;
-import org.example.collections.forms.CoordinatesForm;
 import org.example.collections.forms.Reader;
 import org.example.collections.forms.StandardForm;
 import org.example.collections.validators.CoordinateXValidate;
@@ -11,52 +10,73 @@ import org.example.utility.Console;
 
 import java.util.Scanner;
 
+/**
+ * Класс, который создает объекты Coordinates, в режиме скрипта
+ */
 public class CoordinatesFormNonUserMode implements StandardForm<Coordinates>, nonUserMode {
     private String[] args;
     private final Console console;
+    private final Scanner scanner;
 
-    public CoordinatesFormNonUserMode(Console console) {
+    public CoordinatesFormNonUserMode(Console console, Scanner scanner) {
         this.console = console;
+        this.scanner = scanner;
     }
 
     @Override
     public Coordinates build() {
         Coordinates coordinates = new Coordinates();
-        Reader.setConsole(console);
+        Reader reader = new Reader(console, scanner);
 
-        getX(coordinates);
+        Double x = getX(reader);
+        if (x != null) {
+            coordinates.setX(x);
+        } else {
+            coordinates = null;
+        }
 
-        getY(coordinates);
+        Float y = getY(reader);
+        if (y != null && coordinates != null) {
+            coordinates.setY(y);
+        } else {
+            coordinates = null;
+        }
 
         return coordinates;
     }
 
-    public void getX(Coordinates coordinates){
+    public Double getX(Reader reader) {
+        console.println("Проверка координаты x...");
         Validate<Double> doubleValidate = new CoordinateXValidate();
         Scanner scanner = new Scanner(args[0]);
-        while (true) {
-            Double res = Reader.inputDoubleValue(doubleValidate, scanner);
-            if (res != null) {
-                coordinates.setX(res);
-                break;
-            } else {
-                console.print("Введите значение типа \"Double\" Введите координату x(Максимальное значение поля: 452): ");
-            }
+        Double res = reader.inputDoubleValue(doubleValidate, scanner);
+        console.println("x: " + args[0]);
+        if (res != null) {
+            console.println("");
+            return res;
+        } else {
+            console.printError("Не может быть равен null или больше чем 452\n");
+            return null;
         }
-
     }
 
-    public void getY(Coordinates coordinates){
-        Validate<Float> FloatValidate = new CoordinateYValidate();
-        Scanner scannerY = new Scanner(args[1]);
-        while (true) {
-            float resY = Reader.inputFloatValue(FloatValidate, scannerY);
-            if (resY != 0) {
-                coordinates.setY(resY);
-                break;
-            } else {
-                console.print("Введите координату y(\"Float\" != \"null\"): ");
-            }
+    public Float getY(Reader reader) {
+        console.println("Проверка координаты y...");
+        Float resY = 0f;
+        try {
+            Validate<Float> FloatValidate = new CoordinateYValidate();
+            Scanner scannerY = new Scanner(args[1]);
+            resY = reader.inputFloatValue(FloatValidate, scannerY);
+        } catch (NumberFormatException e) {
+            console.println("Нужно вводить значение типа Float");
+        }
+        console.println("y: " + args[1]);
+        if (resY != null) {
+            console.println("");
+            return resY;
+        } else {
+            console.printError("Не может быть null\n");
+            return null;
         }
     }
 

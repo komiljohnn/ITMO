@@ -8,6 +8,9 @@ import org.example.managers.CollectionManager;
 import org.example.managers.CommandManager;
 import org.example.utility.Console;
 
+/**
+ * Команда, которая добавляет новый элемент в коллекцию
+ */
 public class Add implements Command {
     private final CollectionManager collectionManager;
     private final CommandManager commandManager;
@@ -35,8 +38,13 @@ public class Add implements Command {
             addForm = nonUserMode;
         }
         LabWork labWork = addForm.build();
-        collectionManager.addToCollection(labWork);
-        console.println("Объект создан!");
+        if (labWork != null) {
+            collectionManager.addToCollection(labWork);
+            console.println("Объект добавлен в коллекцию!");
+        } else {
+            console.printError("Объект не добавлен в коллекцию,поправьте скрипт и запустите снова");
+        }
+
     }
 
     @Override

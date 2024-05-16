@@ -4,6 +4,9 @@ import org.example.collections.LabWork;
 import org.example.managers.CollectionManager;
 import org.example.utility.Console;
 
+/**
+ * Команда, которая выводит среднее значение минимальных значений элементов коллекции
+ */
 public class AverageOfMinimalPoint implements Command {
     private final CollectionManager collectionManager;
     private final Console console;
@@ -17,11 +20,16 @@ public class AverageOfMinimalPoint implements Command {
     public void execute(String[] arguments) {
         double result;
         double sum = 0.0;
-        for (LabWork labWork : collectionManager.getCollection()) {
-            sum += labWork.getMinimalPoint();
+        if (collectionManager.isEmpty()) {
+            console.println("Коллекция пуста");
+        } else {
+            for (LabWork labWork : collectionManager.getCollection()) {
+                sum += labWork.getMinimalPoint();
+            }
+            result = sum / collectionManager.getCollection().size();
+            console.println(result);
         }
-        result = sum / collectionManager.getCollection().size();
-        console.println(result);
+
     }
 
     @Override

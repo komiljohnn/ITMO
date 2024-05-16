@@ -5,6 +5,9 @@ import org.example.managers.CollectionManager;
 import org.example.managers.IdManager;
 import org.example.utility.Console;
 
+/**
+ * Команда, которая удаляет элемент по id
+ */
 public class RemoveById implements Command {
     private final CollectionManager collectionManager;
     private final Console console;
@@ -17,10 +20,15 @@ public class RemoveById implements Command {
     @Override
     public void execute(String[] arguments) {
         long id = Long.parseLong(arguments[0].trim());
-        if (collectionManager.deleteById(id)) {
-            IdManager.removeIDbyId(id);
+        if (collectionManager.isEmpty()) {
+            console.println("Коллекция пуста");
+        } else {
+            if (collectionManager.deleteById(id)) {
+                IdManager.removeIDbyId(id);
+                console.println("Элемент удален из коллекции");
+            }
+
         }
-        console.println("Элемент удален из коллекции");
     }
 
     @Override

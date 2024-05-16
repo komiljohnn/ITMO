@@ -10,6 +10,9 @@ import org.example.utility.Console;
 
 import java.util.TreeSet;
 
+/**
+ * Команда, которая добавляет новый элемент если она меньше минимального элемента
+ */
 public class AddIfMin implements Command {
     private final CollectionManager collectionManager;
     private final CommandManager commandManager;
@@ -34,11 +37,13 @@ public class AddIfMin implements Command {
         }
         LabWork result = labWork.build();
 
-        if (result.getPersonalQualitiesMinimum() < sortedSet.first().getPersonalQualitiesMinimum()) {
+        if (result != null && result.getPersonalQualitiesMinimum() < sortedSet.first().getPersonalQualitiesMinimum()) {
             collectionManager.addToCollection(result);
             console.println("Объект добавлен");
-        } else {
+        } else if (result.getPersonalQualitiesMinimum() > sortedSet.first().getPersonalQualitiesMinimum()) {
             console.println("Объект больше чем наименьший элемент");
+        } else {
+            console.println("Объект не создан");
         }
     }
 

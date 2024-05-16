@@ -5,7 +5,7 @@ import org.example.managers.CollectionManager;
 import org.example.utility.Console;
 
 /**
- * Команда sum_of_minimal_point
+ * Команда, которая выводит сумму минимальных значений элементов коллекции
  */
 public class SumOfMinimalPoint implements Command {
     private final CollectionManager collectionManager;
@@ -18,15 +18,20 @@ public class SumOfMinimalPoint implements Command {
 
     /**
      * Выводит сумму минимальных значений для всех элементов коллекции
+     *
      * @param arguments Аргументы
      */
     @Override
     public void execute(String[] arguments) {
         double result = 0.0;
-        for (LabWork labWork : collectionManager.getCollection()) {
-            result += labWork.getMinimalPoint();
+        if (collectionManager.isEmpty()) {
+            console.println("Коллекция пуста");
+        } else {
+            for (LabWork labWork : collectionManager.getCollection()) {
+                result += labWork.getMinimalPoint();
+            }
+            console.println(result);
         }
-        console.println(result);
     }
 
     @Override
