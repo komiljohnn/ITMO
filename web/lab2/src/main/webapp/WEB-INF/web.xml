@@ -1,0 +1,21 @@
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" version="3.1">
+  <display-name>JSP Example</display-name>
+
+  <servlet>
+    <servlet-name>ControllerServlet</servlet-name>
+    <servlet-class>org.example.ControllerServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ControllerServlet</servlet-name>
+    <url-pattern>/controller</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>AreaCheckServlet</servlet-name>
+    <servlet-class>org.example.AreaCheckServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AreaCheckServlet</servlet-name>
+    <url-pattern>/checkArea</url-pattern>
+  </servlet-mapping>
+</web-app>
