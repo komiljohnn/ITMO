@@ -1,29 +1,25 @@
 let inform = '';
 
-// Получаем элементы DOM
 const graph = document.getElementById("svgGraph");
 const validationMessage = document.querySelector('.message');
 const table = document.getElementById("tab").getElementsByTagName("tbody")[0];
 
-// Функции получения значений
+
 function getX() {
     return document.querySelector('input[name="x"]:checked')?.value || null;
-    console.log("11 строчка " + document.querySelector('input[name="x"]:checked')?.value || null);
 }
+
 
 function getY() {
     return document.getElementById('y').value.trim().replace(',', '.');
-    console.log("16 строчка " + document.getElementById('y').value.trim().replace(',', '.'));
 }
 
 function getR() {
     const chboxes = document.querySelectorAll('input[name="r"]:checked');
-    console.log("22 строчка " + Array.from(chboxes).map(chbox => parseFloat(chbox.value)));
-
-    return Array.from(chboxes).map(chbox => parseFloat(chbox.value)); // Возвращаем массив значений
+    return Array.from(chboxes).map(chbox => chbox.value); // Возвращаем массив значений
 }
 
-// Валидация значений X, Y, R
+
 function validateX() {
     let x = getX();
     if (x === null) {
@@ -31,8 +27,8 @@ function validateX() {
         return false;
     }
 
-    const xNum = parseFloat(x);
-    const xValues = [-5, -4, -3, -2, -1, 0, 1, 2, 3];
+    const xNum = x;
+    const xValues = ["-5", "-4", "-3", "-2", "-1", "0", "1", "2", "3"];
     if (!isNaN(xNum) && xValues.includes(xNum)) {
         return true;
     } else {
@@ -43,17 +39,20 @@ function validateX() {
 
 function validateY() {
     let y = getY();
-
-    if (y === '') {
+    const regExp = new RegExp("[^0-9.,-]");
+    if (y === '' || y.match(regExp)) {
         inform = 'Введите значение Y (число с плавающей точкой).';
+        console.log("Строка 45");
         return false;
     }
 
     const yNum = parseFloat(y);
+
     if (!isNaN(yNum) && yNum >= -5 && yNum <= 3) {
         return true;
     } else {
         inform = 'Y должно быть числом в диапазоне (-5, 3).';
+        console.log("Строка 55");
         return false;
     }
 }
@@ -65,7 +64,7 @@ function validateR() {
         return false;
     }
 
-    const validR = [1, 2, 3, 4, 5];
+    const validR = ["1", "2", "3", "4", "5"];
     if (rValues.every(r => validR.includes(r))) {
         return true;
     } else {
@@ -78,45 +77,50 @@ function validateEverything() {
     return validateX() && validateY() && validateR();
 }
 
-// Очистка таблицы
-function clearTable() {
-    while (table.rows.length > 0) {
-        table.deleteRow(0);
-    }
-    console.log('Таблица очищена');
-}
-
 const checkboxes = document.querySelectorAll('input[name="r"]');
-for (const checkbox of checkboxes) {
-    const r = getR();
-    checkbox.addEventListener("change", (e) => {
+var plus;
 
-        const tab = document.getElementsByClassName("js-table");
-        for(const row of tab.rows){
-            let x = row.cells[0].textContent;
-            let y = row.cells[1].textContent;
-            if (!isNaN(x)) {
-                let y = row.cells[1].textContent;
-                addDot(x, y, r);
-            }
-        }
+
+for (const checkbox of checkboxes) {
+    checkbox.addEventListener("change", () => {
+        redrawDots();
     });
 }
 
+function redrawDots() {
+    const rValues = getR();
+    if (rValues.length === 0) {
+        document.querySelectorAll(".tmpDot").forEach(dot => dot.remove());
+        return;
+    }
+    const max_r = Math.max(...rValues);
+    document.querySelectorAll(".tmpDot").forEach(dot => dot.remove());
 
-// Добавление точки на график
-function addDot(x, y, r, hitб) {
+    const tab = document.getElementById("tab");
+    if (!tab) return;
+
+    for (let i = 1; i < tab.rows.length; i++) {
+        let row = tab.rows[i];
+        let x = parseFloat(row.cells[0].textContent.trim());
+        let y = parseFloat(row.cells[1].textContent.trim());
+        if (!isNaN(x) && !isNaN(y)) {
+            addDot(x, y, max_r);
+        }
+    }
+}
+
+function addDot(x, y, r, hit) {
     const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
 
 
-    dot.setAttribute('cx', (x / r[r.length - 1]) * 120 + 150);
-    dot.setAttribute('cy', 150 - (y / r[r.length - 1]) * 120);
+    dot.setAttribute('cx', (x / r) * 120 + 150);
+    dot.setAttribute('cy', 150 - (y / r) * 120);
     dot.setAttribute('r', '2');
     dot.setAttribute('fill', "#e74c3c");
     dot.setAttribute("class", "tmpDot");
 
     graph.appendChild(dot);
-    console.log(`Добавлена точка: x=${x}, y=${y}, r=${r[r.length - 1]}, hit=${hit}`);
+    console.log(`Добавлена точка: x=${x}, y=${y}, r=${r}, hit=${hit}`);
 }
 
 // Обновление таблицы
@@ -150,8 +154,6 @@ graph.addEventListener('click', function (event) {
     point.x = event.clientX;
     point.y = event.clientY;
     let correctPoint = point.matrixTransform(svg.getScreenCTM().inverse());
-    // const x = ((event.clientX - rect.left - 150) * rValues[0]) / 120;
-    // const y = -((event.clientY - rect.top - 150) * rValues[0]) / 120;
     let x = correctPoint.x;
     let y = 300 - correctPoint.y;
     x -= 150;
@@ -167,9 +169,11 @@ graph.addEventListener('click', function (event) {
 
     const queryString = `x=${x}&y=${y}${rArr}`;
 
+
+
     console.log('Отправляем запрос с координатами:', {x, y, r: rValues[rValues.length - 1]});
 
-    fetch(`http://localhost:42100/jsp-example/controller?${queryString}`, {
+    fetch(`http://localhost:8080/jsp-example/controller?${queryString}`, {
         method: 'GET'
     })
         .then(response => {
@@ -179,7 +183,7 @@ graph.addEventListener('click', function (event) {
             return response.json();
         })
         .then(data => {
-            addDot(x, y, rValues, data.hit);
+            addDot(x, y, rValues[rValues.length-1], data.hit);
             updateTab(data);
 
             validationMessage.textContent = 'Точка успешно добавлена.';
@@ -217,7 +221,7 @@ document.getElementById('check').addEventListener('click', function (event) {
 
         console.log('Отправляем запрос:', queryString);
 
-        fetch(`http://localhost:42100/jsp-example/controller?${queryString}`, {
+        fetch(`http://localhost:8080/jsp-example/controller?${queryString}`, {
             method: 'GET'
         })
             .then(response => {
@@ -234,7 +238,7 @@ document.getElementById('check').addEventListener('click', function (event) {
                     const x = parseFloat(result.x);
                     const y = parseFloat(result.y);
                     const hit = result.hit;
-                    addDot(x, y, r, hit);
+                    addDot(x, y, r[r.length-1], hit);
                 });
             })
             .catch(error => {

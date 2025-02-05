@@ -5,7 +5,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>lab1</title>
+    <title>lab2</title>
 
 </head>
 <body>
@@ -135,7 +135,6 @@
                     <label><input type="radio" name="x" value="2"/> 2</label>
                     <label><input type="radio" name="x" value="3"/> 3</label>
                 </div>
-
             </div>
             <div class="form-group">
                 <h4>Изменение Y:</h4>
@@ -218,7 +217,7 @@
                 <th>Время выполнения</th>
             </tr>
             </thead>
-            <tbody class="js-table">
+            <tbody>
                 <%
                     List<Model> models = (List<Model>) application.getAttribute("results");
                     if (models != null) {
@@ -231,22 +230,16 @@
                     <td><%= model.isHit() ? "Попадание" : "Промах" %></td>
                     <td><%= model.getCurrentTime() %></td>
                     <td><%= model.getExecutionTime() %></td>
-                </tr>a
+                </tr>
                 <%
                     }
                 } else {
                 %>
-                <%--<tr>
-                    <td colspan="6">Нет данных</td>
-                </tr>--%>
                 <%
                     }
                 %>
             </tbody>
         </table>
-        <%--<div class="form-group">
-            <button id="clear-storage" type="button">Очистить данные</button>
-        </div>--%>
 
     </div>
     <script src="./script.js"></script>
